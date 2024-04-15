@@ -59,7 +59,9 @@ if (isset($_POST["email"]) && isset($_POST["password"])) {
                     $hash = $user["password"];
                     unset($user["password"]);
                     if (password_verify($password, $hash)) {
-                        echo "Welcome $email";
+                        echo "Weclome $email";
+                        $_SESSION["user"] = $user;
+                        die(header("Location: home.php"));
                     } else {
                         echo "Invalid password";
                     }
