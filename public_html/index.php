@@ -1,2 +1,2 @@
 <?php
-die(header("Location: $BASE_PATH/login.php"));
+header("Location: $BASE_PATH/login.php");
