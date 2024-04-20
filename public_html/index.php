@@ -1,1 +1,2 @@
-<?php echo "It works!";?>
+<?php
+die(header("Location: $BASE_PATH/login.php"));
