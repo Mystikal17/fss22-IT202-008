@@ -1,15 +1,17 @@
 <?php
-// Include necessary files and check permissions
+//fss22 4/30/24
 require(__DIR__ . "/../../../partials/nav.php");
 
 if (!has_role("Admin")) {
     flash("You don't have permission to view this page", "warning");
     die(header("Location: $BASE_PATH" . "/home.php"));
 }
+?>
 
+<?php
 // Initialize variables
 $id = se($_GET, "id", -1, false);
-$team = [];
+$teams = [];
 
 // Check if ID is valid
 if ($id < 1) {
@@ -49,17 +51,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 if ($id > -1) {
     $db = getDB();
     $query = "SELECT `league`, `team_name`, `coach` FROM `Teams` WHERE `id` = :id";
-    $stmt = $db->prepare($query);
-    $stmt->execute([":id" => $id]);
-    $team = $stmt->fetch(PDO::FETCH_ASSOC);
+    try {
+        $stmt = $db->prepare($query);
+        $stmt->execute([":id" => $id]);
+        $r = $stmt->fetch();
+        if ($r) {
+            $stock = $r;
+        }
+    } catch (PDOException $e) {
+        error_log("Error fetching record: " . var_export($e, true));
+        flash("Error fetching record", "danger");
+    }
+} else {
+    flash("Invalid id passed", "danger");
+    die(header("Location:" . get_url("admin/list_stocks.php")));
 }
 
 // Define the form fields for updating team data
+if($Teams){
 $form = [
     ["type" => "text", "name" => "league", "placeholder" => "League", "label" => "League", "value" => $team["league"], "rules" => ["required" => true]],
     ["type" => "text", "name" => "team_name", "placeholder" => "Team Name", "label" => "Team Name", "value" => $team["team_name"], "rules" => ["required" => true]],
     ["type" => "text", "name" => "coach", "placeholder" => "Coach", "label" => "Coach", "value" => $team["coach"], "rules" => ["required" => true]],
 ];
+$keys = array_keys($players);
+    foreach ($form as $k => $v) {
+        if (in_array($v["name"], $keys)) {
+            $form[$k]["value"] = $stock[$v["name"]];
+        }
+    }
+}
 
 ?>
 <div class="container-fluid">
@@ -68,9 +89,10 @@ $form = [
         <a href="<?php echo get_url("admin/list_teams.php"); ?>" class="btn btn-secondary">Back</a>
     </div>
     <form method="POST">
-        <?php foreach ($form as $field) : ?>
-            <?php render_input($field); ?>
-        <?php endforeach; ?>
+        <?php foreach ($form as $k => $v) {
+
+            render_input($v);
+        } ?>
         <?php render_button(["text" => "Update Team", "type" => "submit"]); ?>
     </form>
 </div>

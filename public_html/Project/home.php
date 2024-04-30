@@ -11,8 +11,10 @@ if (is_logged_in(true)) {
 }
 ?>
 
-<a href="/Project/admin/add_teams.php">Add Team</a>
-<a href="/Project/admin/add_players.php">Add Player</a>
+<button class="btn btn-primary" onclick="window.location.href='/Project/admin/add_teams.php'">Add Team</button>
+<button class="btn btn-primary" onclick="window.location.href='/Project/admin/add_players.php'">Add Player</button>
+<button class="btn btn-primary" onclick="window.location.href='/Project/admin/list_players.php'">List of Players</button>
+<button class="btn btn-primary" onclick="window.location.href='/Project/admin/list_teams.php'">List of Teams</button>
 
 <?php
 require(__DIR__ . "/../../partials/flash.php");
