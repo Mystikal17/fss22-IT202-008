@@ -1,9 +1,8 @@
 <?php
-// Include necessary files
+//fss22 4/30/24
 require(__DIR__ . "/../../../partials/nav.php");
 require_once(__DIR__ . "/../../../partials/flash.php");
 
-// Check user role
 if (!has_role("Admin")) {
     flash("You don't have permission to view this page", "warning");
     die(header("Location: " . get_url("home.php")));
@@ -51,6 +50,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["league"]) && isset($_
 </div>
 
 <?php
-// Include necessary files
+
 require_once(__DIR__ . "/../../../partials/flash.php");
 ?>
