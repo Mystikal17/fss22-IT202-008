@@ -1,6 +1,7 @@
 <?php
 require(__DIR__ . "/../../partials/nav.php");
 reset_session();
+//fss22
 ?>
 <div class="container-fluid">
     <form onsubmit="return validate(this)" method="POST">
