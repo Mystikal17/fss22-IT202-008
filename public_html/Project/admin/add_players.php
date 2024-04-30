@@ -1,5 +1,4 @@
 <?php
-//fss22 4/30/24
 require(__DIR__ . "/../../../partials/nav.php");
 require_once(__DIR__ . "/../../../partials/flash.php");
 
@@ -46,7 +45,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"]) && $_POST["
         <?php render_button(["text" => "Add Player", "type" => "submit"]); ?>
     </form>
 </div>
+
 <?php
 // Include flash messages
 require_once(__DIR__ . "/../../../partials/flash.php");
 ?>
+<script>
+    // JavaScript function to handle button click and redirect
+    function redirectToAddPlayer() {
+        window.location.href = '<?php echo get_url("admin/add_players.php"); ?>';
+    }
+</script>

@@ -57,6 +57,7 @@ $table = ["data" => $players, "post_self_form" => ["name" => "player_id", "label
         <?php render_input(["type" => "search", "name" => "player", "placeholder" => "Player Filter", "value" => $search]); ?>
         <?php render_button(["text" => "Search", "type" => "submit"]); ?>
     </form>
+    <?php render_button(["text" => "Add Player", "type" => "button", "classes" => "btn btn-primary", "onclick" => "location.href='" . get_url("admin/add_player.php") . "'"]); ?>
     <?php render_table($table); ?>
 
     <script>
