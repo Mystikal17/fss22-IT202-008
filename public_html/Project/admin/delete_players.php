@@ -1,5 +1,5 @@
 <?php
-
+//fss22 4/30/24
 session_start();
 require(__DIR__ . "/../../../lib/functions.php");
 if (!has_role("Admin")) {
@@ -23,5 +23,4 @@ try {
     error_log("Error deleting player with ID $id: " . $e->getMessage());
     flash("Error deleting record", "danger");
 }
-
 die(header("Location: " . get_url("admin/list_players.php")));
