@@ -1,3 +1,4 @@
 <?php 
+die(header("Location: $BASE_PATH/Project/home.php"));
 ?>
-<a href="/project/register.php">Register</a>
+

@@ -46,7 +46,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"]) && $_POST["
         <?php render_button(["text" => "Add Player", "type" => "submit"]); ?>
     </form>
 </div>
+
 <?php
 // Include flash messages
 require_once(__DIR__ . "/../../../partials/flash.php");
 ?>
+<script>
+    // JavaScript function to handle button click and redirect
+    function redirectToAddPlayer() {
+        window.location.href = '<?php echo get_url("admin/add_players.php"); ?>';
+    }
+</script>
