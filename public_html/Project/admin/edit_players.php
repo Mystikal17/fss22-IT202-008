@@ -11,7 +11,7 @@ if (!has_role("Admin")) {
 <?php
 // Initialize variables
 $id = se($_GET, "id", -1, false);
-$players = [];
+$player = [];
 
 // Check if ID is valid
 if ($id < 1) {
@@ -56,20 +56,18 @@ if ($id > -1) {
     try {
         $stmt = $db->prepare($query);
         $stmt->execute([":id" => $id]);
-        $r = $stmt->fetch();
-        if ($r) {
-            $stock = $r;
+        $player = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch player data
+        if (!$player) {
+            flash("Player not found", "danger");
+            die(header("Location:" . get_url("admin/list_players.php")));
         }
     } catch (PDOException $e) {
         error_log("Error fetching record: " . var_export($e, true));
         flash("Error fetching record", "danger");
+        die(header("Location:" . get_url("admin/list_players.php")));
     }
-} else {
-    flash("Invalid id passed", "danger");
-    die(header("Location:" . get_url("admin/list_stocks.php")));
 }
 
-if($players){
 // Define the form fields for updating player data
 $form = [
     ["type" => "text", "name" => "name", "placeholder" => "Player Name", "label" => "Player Name", "value" => $player["name"], "rules" => ["required" => true]],
@@ -77,13 +75,6 @@ $form = [
     ["type" => "number", "name" => "age", "placeholder" => "Age", "label" => "Age", "value" => $player["age"], "rules" => ["required" => true]],
     ["type" => "text", "name" => "nationality", "placeholder" => "Nationality", "label" => "Nationality", "value" => $player["nationality"], "rules" => ["required" => true]],
 ];
-$keys = array_keys($players);
-    foreach ($form as $k => $v) {
-        if (in_array($v["name"], $keys)) {
-            $form[$k]["value"] = $stock[$v["name"]];
-        }
-    }
-}
 
 ?>
 <div class="container-fluid">

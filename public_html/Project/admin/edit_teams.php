@@ -11,7 +11,7 @@ if (!has_role("Admin")) {
 <?php
 // Initialize variables
 $id = se($_GET, "id", -1, false);
-$teams = [];
+$team = [];
 
 // Check if ID is valid
 if ($id < 1) {
@@ -54,46 +54,40 @@ if ($id > -1) {
     try {
         $stmt = $db->prepare($query);
         $stmt->execute([":id" => $id]);
-        $r = $stmt->fetch();
-        if ($r) {
-            $stock = $r;
+        $team = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch team data
+        if (!$team) {
+            flash("Team not found", "danger");
+            die(header("Location:" . get_url("admin/list_teams.php")));
         }
     } catch (PDOException $e) {
         error_log("Error fetching record: " . var_export($e, true));
         flash("Error fetching record", "danger");
+        die(header("Location:" . get_url("admin/list_teams.php")));
     }
-} else {
-    flash("Invalid id passed", "danger");
-    die(header("Location:" . get_url("admin/list_stocks.php")));
 }
 
 // Define the form fields for updating team data
-if($Teams){
 $form = [
     ["type" => "text", "name" => "league", "placeholder" => "League", "label" => "League", "value" => $team["league"], "rules" => ["required" => true]],
     ["type" => "text", "name" => "team_name", "placeholder" => "Team Name", "label" => "Team Name", "value" => $team["team_name"], "rules" => ["required" => true]],
     ["type" => "text", "name" => "coach", "placeholder" => "Coach", "label" => "Coach", "value" => $team["coach"], "rules" => ["required" => true]],
 ];
-$keys = array_keys($players);
-    foreach ($form as $k => $v) {
-        if (in_array($v["name"], $keys)) {
-            $form[$k]["value"] = $stock[$v["name"]];
-        }
-    }
-}
 
 ?>
 <div class="container-fluid">
     <h3>Edit Team</h3>
     <div>
-        <a href="<?php echo get_url("admin/list_teams.php"); ?>" class="btn btn-secondary">Back</a>
+        <?php if (has_role("Admin")) : ?>
+            <a href="<?php echo get_url("admin/list_teams.php"); ?>" class="btn btn-secondary">Back</a>
+        <?php endif; ?>
     </div>
     <form method="POST">
         <?php foreach ($form as $k => $v) {
-
             render_input($v);
         } ?>
-        <?php render_button(["text" => "Update Team", "type" => "submit"]); ?>
+        <?php if (has_role("Admin")) : ?>
+            <?php render_button(["text" => "Update Team", "type" => "submit"]); ?>
+        <?php endif; ?>
     </form>
 </div>
 

@@ -1,18 +1,17 @@
 <?php
 require(__DIR__ . "/../../../partials/nav.php");
 
-if (!has_role("Admin")) {
-    flash("You don't have permission to view this page", "warning");
-    die(header("Location: " . get_url("home.php")));
+if (is_logged_in(true)) {
+    error_log("session Date: " . var_export($_SESSION, true));
 }
 
 $id = se($_GET, "id", -1, false);
 
-$team = ['Teams'];
+$team = [];
 if ($id > -1) {
-    // Fetch team data with name, league, and coach
+    // Fetch team data
     $db = getDB();
-    $query = "SELECT name, league, coach FROM `Teams` WHERE id = :id";
+    $query = "SELECT team_name, coach, league, created_at, updated_at FROM `Teams` WHERE id = :id";
     try {
         $stmt = $db->prepare($query);
         $stmt->execute([":id" => $id]);
@@ -26,7 +25,6 @@ if ($id > -1) {
     die(header("Location: " . get_url("admin/list_teams.php")));
 }
 
-// Handle missing data
 foreach ($team as $key => $value) {
     if (is_null($value)) {
         $team[$key] = "N/A";
@@ -35,7 +33,7 @@ foreach ($team as $key => $value) {
 ?>
 
 <div class="container-fluid">
-    <h3>Team: <?php echo $team['name'] ?? 'Unknown'; ?></h3>
+    <h3>Team: <?php echo $team['team_name'] ?? 'Unknown'; ?></h3>
     <div>
         <a href="<?php echo get_url("admin/list_teams.php"); ?>" class="btn btn-secondary">Back</a>
     </div>
@@ -43,9 +41,11 @@ foreach ($team as $key => $value) {
         <div class="card-body">
             <h5 class="card-title">Team Details</h5>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item">Name: <?php echo $team['name'] ?? 'Unknown'; ?></li>
-                <li class="list-group-item">League: <?php echo $team['league'] ?? 'Unknown'; ?></li>
+                <li class="list-group-item">Name: <?php echo $team['team_name'] ?? 'Unknown'; ?></li>
                 <li class="list-group-item">Coach: <?php echo $team['coach'] ?? 'Unknown'; ?></li>
+                <li class="list-group-item">League: <?php echo $team['league'] ?? 'Unknown'; ?></li>
+                <li class="list-group-item">Created At: <?php echo $team['created_at'] ?? 'Unknown'; ?></li>
+                <li class="list-group-item">Updated At: <?php echo $team['updated_at'] ?? 'Unknown'; ?></li>
             </ul>
         </div>
     </div>
