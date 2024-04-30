@@ -10,6 +10,10 @@ if (is_logged_in(true)) {
     error_log("Session data: " . var_export($_SESSION, true));
 }
 ?>
+
+<a href="/Project/admin/add_teams.php">Add Team</a>
+<a href="/Project/admin/add_players.php">Add Player</a>
+
 <?php
 require(__DIR__ . "/../../partials/flash.php");
 ?>
