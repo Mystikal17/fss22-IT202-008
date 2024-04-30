@@ -3,13 +3,13 @@ require(__DIR__ . "/../../partials/nav.php");
 reset_session();
 ?>
 <div class="container-fluid">
-<form onsubmit="return validate(this)" method="POST">
-    <?php render_input(["type"=>"email", "id"=>"email", "name"=>"email", "label"=>"Email", "rules"=>["required"=>true]]);?>
-    <?php render_input(["type"=>"text", "id"=>"username", "name"=>"username", "label"=>"Username", "rules"=>["required"=>true, "maxlength"=>30]]);?>
-    <?php render_input(["type"=>"password", "id"=>"password", "name"=>"password", "label"=>"Password", "rules"=>["required"=>true, "minlength"=>8]]);?>
-    <?php render_input(["type"=>"password", "id"=>"confirm", "name"=>"confirm", "label"=>"Confirm Password", "rules"=>["required"=>true,"minlength"=>8]]);?>
-    <?php render_button(["text"=>"Register", "type"=>"submit"]);?>
-</form>
+    <form onsubmit="return validate(this)" method="POST">
+        <?php render_input(["type" => "email", "id" => "email", "name" => "email", "label" => "Email", "rules" => ["required" => true]]); ?>
+        <?php render_input(["type" => "text", "id" => "username", "name" => "username", "label" => "Username", "rules" => ["required" => true, "maxlength" => 30]]); ?>
+        <?php render_input(["type" => "password", "id" => "password", "name" => "password", "label" => "Password", "rules" => ["required" => true, "minlength" => 8]]); ?>
+        <?php render_input(["type" => "password", "id" => "confirm", "name" => "confirm", "label" => "Confirm Password", "rules" => ["required" => true, "minlength" => 8]]); ?>
+        <?php render_button(["text" => "Register", "type" => "submit"]); ?>
+    </form>
 </div>
 <script>
     function validate(form) {
@@ -76,5 +76,5 @@ if (isset($_POST["email"]) && isset($_POST["password"]) && isset($_POST["confirm
 }
 ?>
 <?php
-require(__DIR__ . "/../../partials/footer.php");
+require(__DIR__ . "/../../partials/flash.php");
 ?>

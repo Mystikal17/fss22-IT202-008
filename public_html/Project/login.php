@@ -12,32 +12,15 @@ require_once(__DIR__ . "/../../partials/nav.php");
     function validate(form) {
         //TODO 1: implement JavaScript validation
         //ensure it returns false for an error and true for success
-        let isValid = true;
-        const email = form.email.value;
-        const password = form.password.value;
-        if (email.indexOf("@") > -1) {
-            if (!isValidEmail(email)) {
-                flash("Invalid email", "danger");
-                isValid = false;
-            }
-        } else {
-            if (!isValidUsername(email)) {
-                flash("Username must be lowercase, 3-16 characters, and contain only a-z, 0-9, _ or -", "danger");
-                isValid = false;
-            }
-        }
-        if (!isValidPassword(password)) {
-            flash("Password too short", "danger");
-            isValid = false;
-        }
-        return isValid;
+
+        return true;
     }
 </script>
 <?php
 //TODO 2: add PHP Code
 if (isset($_POST["email"]) && isset($_POST["password"])) {
-    $email = se($_POST, "email", "", false); //$_POST["email"];
-    $password = se($_POST, "password", "", false); //$_POST["password"];
+    $email = se($_POST, "email", "", false);
+    $password = se($_POST, "password", "", false);
 
     //TODO 3
     $hasError = false;
@@ -45,23 +28,10 @@ if (isset($_POST["email"]) && isset($_POST["password"])) {
         flash("Email must be provided <br>");
         $hasError = true;
     }
-    //sanitize
-    //$email = filter_var($email, FILTER_SANITIZE_EMAIL);
-
-    //validate
-    /*if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        flash("Please enter a valid email <br>");
-        $hasError = true;
-    }*/
     if (str_contains($email, "@")) {
         //sanitize
-        //$email = filter_var($email, FILTER_SANITIZE_EMAIL);
         $email = sanitize_email($email);
         //validate
-        /*if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            flash("Invalid email address");
-            $hasError = true;
-        }*/
         if (!is_valid_email($email)) {
             flash("Invalid email address");
             $hasError = true;
@@ -124,4 +94,4 @@ if (isset($_POST["email"]) && isset($_POST["password"])) {
     }
 }
 ?>
-<?php require_once(__DIR__ . "/../../partials/footer.php");
+<?php require_once(__DIR__ . "/../../partials/flash.php");

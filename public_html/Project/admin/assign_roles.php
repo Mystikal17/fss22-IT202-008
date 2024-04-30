@@ -4,7 +4,7 @@ require(__DIR__ . "/../../../partials/nav.php");
 
 if (!has_role("Admin")) {
     flash("You don't have permission to view this page", "warning");
-    die(header("Location: $BASE_PATH" . "home.php"));
+    die(header("Location: $BASE_PATH" . "/home.php"));
 }
 //attempt to apply
 if (isset($_POST["users"]) && isset($_POST["roles"])) {
@@ -15,7 +15,8 @@ if (isset($_POST["users"]) && isset($_POST["roles"])) {
     } else {
         //for sake of simplicity, this will be a tad inefficient
         $db = getDB();
-        $stmt = $db->prepare("INSERT INTO UserRoles (user_id, role_id, is_active) VALUES (:uid, :rid, 1) ON DUPLICATE KEY UPDATE is_active = !is_active");
+        $stmt = $db->prepare("INSERT INTO UserRoles (user_id, role_id, is_active) VALUES (:uid, :rid, 1) 
+        ON DUPLICATE KEY UPDATE is_active = !is_active");
         foreach ($user_ids as $uid) {
             foreach ($role_ids as $rid) {
                 try {
@@ -50,7 +51,8 @@ if (isset($_POST["username"])) {
     $username = se($_POST, "username", "", false);
     if (!empty($username)) {
         $db = getDB();
-        $stmt = $db->prepare("SELECT Users.id, username, (SELECT GROUP_CONCAT(name, ' (' , IF(ur.is_active = 1,'active','inactive') , ')') from 
+        $stmt = $db->prepare("SELECT Users.id, username, 
+        (SELECT GROUP_CONCAT(name, ' (' , IF(ur.is_active = 1,'active','inactive') , ')') from 
         UserRoles ur JOIN Roles on ur.role_id = Roles.id WHERE ur.user_id = Users.id) as roles
         from Users WHERE username like :username");
         try {
@@ -91,8 +93,8 @@ if (isset($_POST["username"])) {
                             <?php foreach ($users as $user) : ?>
                                 <tr>
                                     <td>
-                                        <label for="user_<?php se($user, 'id'); ?>"><?php se($user, "username"); ?></label>
-                                        <input id="user_<?php se($user, 'id'); ?>" type="checkbox" name="users[]" value="<?php se($user, 'id'); ?>" />
+                                        <?php render_input(["type" => "checkbox", "id" => "user_" . se($user, 'id', "", false), "name" => "users[]", "label" => se($user, "username", "", false), "value" => se($user, 'id', "", false)]); ?>
+
                                     </td>
                                     <td><?php se($user, "roles", "No Roles"); ?></td>
                                 </tr>
@@ -102,8 +104,8 @@ if (isset($_POST["username"])) {
                     <td>
                         <?php foreach ($active_roles as $role) : ?>
                             <div>
-                                <label for="role_<?php se($role, 'id'); ?>"><?php se($role, "name"); ?></label>
-                                <input id="role_<?php se($role, 'id'); ?>" type="checkbox" name="roles[]" value="<?php se($role, 'id'); ?>" />
+                                <?php render_input(["type" => "checkbox", "id" => "role_" . se($role, 'id', "", false), "name" => "roles[]", "label" => se($role, "name", "", false), "value" => se($role, 'id', "", false)]); ?>
+
                             </div>
                         <?php endforeach; ?>
                     </td>
@@ -115,5 +117,5 @@ if (isset($_POST["username"])) {
 </div>
 <?php
 //note we need to go up 1 more directory
-require_once(__DIR__ . "/../../../partials/footer.php");
+require_once(__DIR__ . "/../../../partials/flash.php");
 ?>
