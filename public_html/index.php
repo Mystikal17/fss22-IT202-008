@@ -1,3 +1,3 @@
 <?php 
-//Add url to redirect
 ?>
+<a href="/project/register.php">Register</a>
