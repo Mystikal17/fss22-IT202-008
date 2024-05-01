@@ -1,4 +1,4 @@
-Link: 
+Video Link: https://youtu.be/ifE8bTNZKQU
 
 
 [fss22_it202-api-project-milestone-2-2024_IT202-008-S2024.pdf](https://github.com/Mystikal17/fss22-IT202-008/files/15172795/fss22_it202-api-project-milestone-2-2024_IT202-008-S2024.pdf)
