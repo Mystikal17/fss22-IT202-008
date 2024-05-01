@@ -4,7 +4,6 @@
     $_btn_type = se($data, "type", "button", false);
     $_btn_text = se($data, "text", "Button", false);
     $_btn_color = se($data, "color", "primary", false);
-    //TODO add support for onClick
     ?>
     <?php if ($_btn_type === "button") : ?>
         <button class="btn btn-<?php se($_btn_color); ?>"><?php se($_btn_text); ?></button>
