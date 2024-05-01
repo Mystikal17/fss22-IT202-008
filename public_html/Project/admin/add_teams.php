@@ -8,7 +8,6 @@ if (!has_role("Admin")) {
     die(header("Location: " . get_url("home.php")));
 }
 
-// Process form data for adding a team
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["league"]) && isset($_POST["team_name"]) && isset($_POST["coach"])) {
     // Retrieve form data for team creation
     $league = se($_POST, "league", "", false);
@@ -19,24 +18,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["league"]) && isset($_
     if (empty($league) || empty($teamName) || empty($coach)) {
         flash("Please fill out all required fields for team creation", "danger");
     } else {
-        // Insert data into Teams table
+        // Check if team with the same name already exists
         $db = getDB();
-        $stmt = $db->prepare("INSERT INTO Teams (league, team_name, coach) VALUES (:league, :teamName, :coach)");
-        try {
-            $stmt->bindParam(":league", $league);
-            $stmt->bindParam(":teamName", $teamName);
-            $stmt->bindParam(":coach", $coach);
-            if ($stmt->execute()) {
-                flash("Team added successfully", "success");
-            } else {
-                flash("An error occurred while adding the team", "danger");
-            }
-        } catch (PDOException $e) {
-            flash("An error occurred while adding the team", "danger");
-            error_log(var_export($e->errorInfo, true));
+        $checkQuery = "SELECT COUNT(*) AS teamCount FROM `Teams` WHERE `team_name` = :teamName";
+        $checkStmt = $db->prepare($checkQuery);
+        $checkStmt->execute([":teamName" => $teamName]);
+        $teamCount = $checkStmt->fetch(PDO::FETCH_ASSOC)["teamCount"];
+
+        if ($teamCount > 0) {
+            flash("Team with the same name already exists", "danger");
+        } else {
+            // Insert data into Teams table
+            $insertQuery = "INSERT INTO `Teams` (`league`, `team_name`, `coach`) VALUES (:league, :teamName, :coach)";
+            $stmt = $db->prepare($insertQuery);
+            $stmt->execute([
+                ":league" => $league,
+                ":teamName" => $teamName,
+                ":coach" => $coach
+            ]);
+            flash("Team added successfully", "success");
         }
     }
 }
+
 ?>
 
 <div class="container-fluid">
