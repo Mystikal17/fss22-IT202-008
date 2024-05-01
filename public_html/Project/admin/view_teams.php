@@ -6,7 +6,7 @@ if (is_logged_in(true)) {
 }
 
 $id = se($_GET, "id", -1, false);
-
+//fss22 4/30/24
 $team = [];
 if ($id > -1) {
     // Fetch team data
