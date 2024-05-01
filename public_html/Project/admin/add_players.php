@@ -19,17 +19,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"]) && $_POST["
     if (empty($playerName) || empty($position) || empty($age) || empty($nationality)) {
         flash("Please fill out all required fields for adding a player", "danger");
     } else {
-        // Insert player data into the database
+        // Check if player with the same name already exists
         $db = getDB();
-        $query = "INSERT INTO `Players` (`name`, `position`, `age`, `nationality`) VALUES (:name, :position, :age, :nationality)";
-        $stmt = $db->prepare($query);
-        $stmt->execute([
-            ":name" => $playerName,
-            ":position" => $position,
-            ":age" => $age,
-            ":nationality" => $nationality
-        ]);
-        flash("Player added successfully", "success");
+        $checkQuery = "SELECT COUNT(*) AS playerCount FROM `Players` WHERE `name` = :name";
+        $checkStmt = $db->prepare($checkQuery);
+        $checkStmt->execute([":name" => $playerName]);
+        $playerCount = $checkStmt->fetch(PDO::FETCH_ASSOC)["playerCount"];
+
+        if ($playerCount > 0) {
+            flash("Player with the same name already exists", "danger");
+        } else {
+            // Insert player data into the database
+            $insertQuery = "INSERT INTO `Players` (`name`, `position`, `age`, `nationality`) VALUES (:name, :position, :age, :nationality)";
+            $stmt = $db->prepare($insertQuery);
+            $stmt->execute([
+                ":name" => $playerName,
+                ":position" => $position,
+                ":age" => $age,
+                ":nationality" => $nationality
+            ]);
+            flash("Player added successfully", "success");
+        }
     }
 }
 

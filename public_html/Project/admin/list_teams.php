@@ -1,76 +1,83 @@
 <?php
+//note we need to go up 1 more directory
 require(__DIR__ . "/../../../partials/nav.php");
 
-if (!has_role("Admin")) {
-    flash("You don't have permission to view this page", "warning");
-    die(header("Location: " . get_url("home.php")));
+if (is_logged_in(true)) {
+    error_log("session Date: " . var_export($_SESSION, true));
 }
 
-// Handle the toggle first so select pulls fresh data
-if (isset($_POST["team_id"])) {
-    $team_id = se($_POST, "team_id", "", false);
-    if (!empty($team_id)) {
-        $db = getDB();
-        $stmt = $db->prepare("UPDATE Teams SET is_active = !is_active WHERE id = :tid");
-        try {
-            $stmt->execute([":tid" => $team_id]);
-            flash("Updated Team", "success");
-        } catch (PDOException $e) {
-            flash(var_export($e->errorInfo, true), "danger");
-        }
-    }
+// build search form
+$form = [
+    ["type" => "text", "name" => "name", "placeholder" => "Team Name", "label" => "Team Name", "include_margin" => false],
+    //["type" => "select", "name" => "sort", "label" => "Sort", "options" => ["team_name" => "Name", "coach" => "Coach", "founded" => "Founded"], "include_margin" => false],
+    //["type" => "select", "name" => "order", "label" => "Order", "options" => ["asc" => "Ascending", "desc" => "Descending"], "include_margin" => false],
+    ["type" => "number", "name" => "limit", "label" => "Limit", "value" => "10", "include_margin" => false],
+];
+
+$query = "SELECT id, Team_Name FROM Teams WHERE 1=1";
+$params = [];
+
+// Add conditions based on form input
+if (!empty($_GET["name"])) {
+    $query .= " AND team_name LIKE :name";
+    $params[":name"] = "%" . $_GET["name"] . "%";
 }
 
-$query = "SELECT id, league, team_name, coach, if(is_active, 'active', 'disabled') as 'Active' FROM Teams";
-$params = null;
-$search = "";
-if (isset($_POST["team"])) {
-    $search = se($_POST, "team", "", false);
-    $query .= " WHERE team_name LIKE :team";
-    $params = [":team" => "%$search%"];
+// Sort and order
+$sort = isset($_GET["sort"]) ? $_GET["sort"] : "team_name";
+$order = isset($_GET["order"]) ? $_GET["order"] : "asc";
+
+if (isset($_GET["sort_alphabet"])) {
+    $query .= " ORDER BY team_name ASC";
+} else {
+    $query .= " ORDER BY $sort $order";
 }
-$query .= " ORDER BY updated_at DESC LIMIT 10";
+
+// Limit
+$limit = isset($_GET["limit"]) ? $_GET["limit"] : 10;
+$query .= " LIMIT $limit";
 
 $db = getDB();
 $stmt = $db->prepare($query);
-$teams = [];
+$results = [];
 
 try {
     $stmt->execute($params);
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    if ($results) {
-        $teams = $results;
-    } else {
-        flash("No matches found", "warning");
-    }
 } catch (PDOException $e) {
-    flash(var_export($e->errorInfo, true), "danger");
+    error_log("Error fetching teams: " . $e->getMessage());
+    flash("An error occurred while fetching teams", "danger");
 }
 
-$table = ["data" => $teams, "post_self_form" => ["name" => "team_id", "label" => "Toggle", "classes" => "btn btn-secondary"]];
+$table = [
+    "data" => $results,
+    "title" => "Teams",
+    "ignored_columns" => ["id"],
+    "edit_url" => get_url("admin/edit_teams.php"),
+    "delete_url" => get_url("admin/delete_teams.php"),
+    "view_url" => get_url("admin/view_teams.php"),
+];
 
 ?>
 
 <div class="container-fluid">
-    <h1>List Teams</h1>
-    <form method="POST">
-        <?php render_input(["type" => "search", "name" => "team", "placeholder" => "Team Filter", "value" => $search]); ?>
-        <?php render_button(["text" => "Search", "type" => "submit"]); ?>
+    <h3>List Teams</h3>
+    <form method="GET">
+        <div class="row mb-3" style="align-items: flex-end;">
+            <?php foreach ($form as $k => $v) : ?>
+                <div class="col">
+                    <?php render_input($v); ?>
+                </div>
+            <?php endforeach; ?>
+            <div class="col">
+                <?php render_button(["text" => "Search", "type" => "submit", "text" => "Filter"]); ?>
+                <?php render_button(["text" => "Sort Alphabetically", "type" => "submit", "name" => "sort_alphabet"]); ?>
+                <a href="?clear" class="btn btn-secondary">Clear</a>
+            </div>
+        </div>
     </form>
     <?php render_table($table); ?>
-
-    <script>
-        let forms = [...document.forms];
-        forms.shift();
-        let search = "<?php se($search); ?>";
-        for (let form of forms) {
-            let ele = document.createElement("input");
-            ele.type = "hidden";
-            ele.name = "team";
-            ele.value = search;
-            form.appendChild(ele);
-        }
-    </script>
 </div>
-
-<?php require_once(__DIR__ . "/../../../partials/flash.php"); ?>
+<?php
+require_once(__DIR__ . "/../../../partials/flash.php");
+?>
