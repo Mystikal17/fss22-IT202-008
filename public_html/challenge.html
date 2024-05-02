@@ -18,23 +18,15 @@
                 //Note: likely you'll want to call updateCurrentPage towards the end
             }, 100);
         }
-        
-        function handleNavLinkClick(linkText) {
-        // Update the content of the <h1> tag with the link text
-        document.querySelector("h1").textContent = linkText;
-        // Update the content of the <title> tag with the link text
-        document.title = linkText;
-        // Call updateCurrentPage with the link text
-        updateCurrentPage(linkText);
-    }
+    
     </script>
     <style>
         /* TODO: make edits here */
         /* Make the navigation horizontal */
         nav ul {
             display: flex;
-            list-style-type: none; /* Get rid of the navigation list item markers */
-            background-color: rgb(216, 11, 11); /* Give the navigation a background */
+            list-style-type: none; 
+            background-color: rgb(216, 11, 11); 
             justify-content: space-around;
             padding: 10px 0;
         }
