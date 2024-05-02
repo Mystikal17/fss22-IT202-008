@@ -8,6 +8,7 @@
         window.addEventListener("load", () => {
             console.log("loaded via javascript");
             //TODO: add any extra onload processing you may need here
+            document.querySelector("footer").innerHTML = "Page loaded successfully!";
         });
         function getCurrentSelection() {
             setTimeout(() => {
@@ -17,9 +18,56 @@
                 //Note: likely you'll want to call updateCurrentPage towards the end
             }, 100);
         }
+        
+        function handleNavLinkClick(linkText) {
+        // Update the content of the <h1> tag with the link text
+        document.querySelector("h1").textContent = linkText;
+        // Update the content of the <title> tag with the link text
+        document.title = linkText;
+        // Call updateCurrentPage with the link text
+        updateCurrentPage(linkText);
+    }
     </script>
     <style>
         /* TODO: make edits here */
+        /* Make the navigation horizontal */
+        nav ul {
+            display: flex;
+            list-style-type: none; /* Get rid of the navigation list item markers */
+            background-color: rgb(216, 11, 11); /* Give the navigation a background */
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+
+        nav ul li {
+            /* Change the "bullet points" of this entire list to checkmarks (✓) */
+            list-style-type: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="Blue" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5.93 13.93a1.25 1.25 0 0 1-1.77 0l-4-4a1.25 1.25 0 0 1 1.77-1.77L5 10.24l9.48-9.48a1.25 1.25 0 0 1 1.77 1.77l-10 10a1.25 1.25 0 0 1-1.77 0z"></path></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            padding-left: 15px;
+        }
+
+        nav ul li a {
+            text-transform: capitalize; /* Use CSS to uppercase the first character of the content in the <h1> tag and the <a> tags */
+            color: rgb(255, 255, 255);
+            text-decoration: none;
+        }
+
+        nav ul li a:hover {
+            color: rgb(30, 204, 24); /* Make the links (or their surrounding area) change color on mouseover */
+        }
+
+        /* Additional styling (not conflicting with assignment requirements) */
+        h1, nav ul li a {
+            font-family: Arial, sans-serif;
+        }
+
+        footer {
+            background-color: rgb(6, 123, 161);
+            text-align: center;
+            padding: 10px 0;
+        }
     </style>
     <!-- make the necessary edits above this line -->
 
